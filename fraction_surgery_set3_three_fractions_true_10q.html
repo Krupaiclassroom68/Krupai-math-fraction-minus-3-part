@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Fraction Surgery Set 3 - Kru Pai Classroom</title>
+<style>
+:root{
+  --bg1:#fff2e8; --bg2:#e9f8ff; --ink:#21304d; --blue:#3977d8; --pink:#ff7aa8;
+  --green:#18a96b; --red:#e94e5f; --yellow:#ffd869; --paper:#fffdf5; --line:#b9defe;
+  --shadow:0 20px 50px rgba(27,50,90,.18);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{
+  margin:0; min-height:100vh; font-family:Tahoma,'Noto Sans Thai',Arial,sans-serif; color:var(--ink);
+  background:
+    radial-gradient(circle at 10% 8%,rgba(255,122,168,.24),transparent 24%),
+    radial-gradient(circle at 90% 12%,rgba(57,119,216,.22),transparent 22%),
+    linear-gradient(135deg,var(--bg1),var(--bg2));
+}
+.wrap{width:min(1250px,96vw); margin:auto; padding:16px 0 28px}
+.screen{display:none}.screen.active{display:block}
+.header{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
+.logo{font-size:clamp(18px,3vw,30px);font-weight:1000;color:#184d9c}
+.badge{background:#fff;border:3px solid #184d9c;border-radius:999px;padding:8px 14px;font-weight:1000;color:#d82769}
+.card{
+  position:relative; border-radius:30px; padding:clamp(18px,3vw,34px);
+  background:linear-gradient(var(--line) 1px, transparent 1px), var(--paper);
+  background-size:100% 34px; border:4px solid #184d9c; box-shadow:var(--shadow),0 9px 0 rgba(24,77,156,.13);
+  overflow:hidden;
+}
+.decor{position:absolute;font-size:42px;opacity:.9;pointer-events:none}.d1{right:20px;top:20px;transform:rotate(16deg)}.d2{left:22px;bottom:16px;transform:rotate(-16deg)}.d3{right:36px;bottom:18px}
+h1{font-size:clamp(34px,6vw,68px);line-height:1.06;margin:6px 0 12px;color:#184d9c}
+p{font-size:clamp(16px,2.2vw,23px);line-height:1.65;font-weight:800}
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:16px 0}
+.rule{background:#fff;border:3px dashed #7aaeea;border-radius:20px;padding:14px;font-weight:1000;line-height:1.5}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:center}
+input{
+  border:3px solid #184d9c;border-radius:14px;padding:10px 12px;font-size:22px;font-weight:1000;text-align:center;
+  background:#fff;color:#184d9c;outline:0;min-width:0;
+}
+#playerName{flex:1;text-align:left;min-width:230px}
+button{
+  border:0;border-radius:16px;padding:13px 18px;font-size:18px;font-weight:1000;cursor:pointer;
+  background:linear-gradient(#fff2a8,#ffc62d);color:#1b2438;box-shadow:0 6px 0 #b17c00;
+}
+button:active{transform:translateY(4px);box-shadow:0 2px 0 #b17c00}
+button:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btnBlue{background:linear-gradient(#9ed8ff,#4c98ff);box-shadow:0 6px 0 #15549b}
+.btnPink{background:linear-gradient(#ffc0d7,#ff6fa4);box-shadow:0 6px 0 #be2d65;color:#3c0017}
+.btnGreen{background:linear-gradient(#91ffc8,#24cf7b);box-shadow:0 6px 0 #0b7a43}
+.btnRed{background:linear-gradient(#ffa4aa,#e94e5f);box-shadow:0 6px 0 #a3202d;color:#320006}
+.btnGray{background:linear-gradient(#fff,#dfe8f5);box-shadow:0 6px 0 #8790a1}
+.topbar{display:grid;grid-template-columns:1fr auto auto auto;gap:10px;align-items:center;margin-bottom:10px}
+.pill{background:#fff;border:3px solid #184d9c;border-radius:999px;padding:9px 13px;font-weight:1000}
+.gameGrid{display:grid;grid-template-columns:minmax(0,1fr) 285px;gap:14px;align-items:start}
+.questionBox{
+  background:#fff;border:3px solid #184d9c;border-radius:22px;padding:14px 16px;font-size:clamp(18px,2.5vw,27px);font-weight:1000;line-height:1.45;
+}
+.surgeryPanel{
+  background:rgba(255,255,255,.74);border:4px solid #184d9c;border-radius:26px;padding:18px;margin-top:14px;
+  overflow-x:auto; overflow-y:visible;
+}
+.fracLine{
+  display:flex; justify-content:center; align-items:center; gap:clamp(8px,1.5vw,18px);
+  flex-wrap:nowrap; min-width:max-content; padding:6px 10px 18px;
+}
+.fraction{
+  display:grid;grid-template-rows:auto 6px auto;align-items:center;justify-items:center;gap:8px;
+  min-width:76px; overflow:visible;
+}
+.bar{height:6px;background:#184d9c;border-radius:99px;width:100%}
+.numNode{
+  position:relative; min-width:64px; min-height:60px; border:3px solid #184d9c; border-radius:18px; background:#fff;
+  display:flex;align-items:center;justify-content:center; font-size:clamp(28px,4.2vw,48px); font-weight:1000; color:#184d9c;
+  cursor:pointer; padding:4px 8px; overflow:visible;
+}
+.numNode.selected{outline:5px solid rgba(255,122,168,.45);background:#fff1f6;color:#d82769}
+.numNode.cancelled{background:#f4f6fb;color:#8b93a5;border-color:#8b93a5}
+.numNode.cancelled:after{
+  content:"";position:absolute;left:6px;right:6px;top:50%;height:5px;border-radius:99px;background:var(--red);transform:rotate(-18deg);
+}
+.newTrail{position:absolute;left:calc(100% + 6px);top:-8px;display:flex;gap:4px;flex-direction:column;align-items:flex-start;z-index:7}
+.smallNode{
+  position:relative; min-width:38px;height:34px;border:2px solid #18a96b;border-radius:11px;background:#ecfff5;color:#0c7045;
+  display:flex;align-items:center;justify-content:center;font-size:21px;font-weight:1000;cursor:pointer;padding:2px 5px;
+}
+.smallNode.selected{outline:4px solid rgba(255,122,168,.44)}
+.smallNode.cancelled{background:#eef1f5;border-color:#9aa1ad;color:#9aa1ad}
+.smallNode.cancelled:after{content:"";position:absolute;left:4px;right:4px;top:50%;height:4px;background:#e94e5f;border-radius:99px;transform:rotate(-16deg)}
+.smallInput{
+  position:absolute;left:calc(100% + 8px);top:23px;width:48px;height:38px;padding:4px;font-size:22px;border-color:#18a96b;background:#eafff4;color:#0c7045;
+}
+.times{font-size:clamp(30px,5vw,52px);font-weight:1000;color:#d82769}
+.factorPad{margin-top:16px;display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+.factorBtn{min-width:48px;border-radius:50%;padding:12px 0;background:linear-gradient(#dff5ff,#7cc8ff);box-shadow:0 6px 0 #2f77b7}
+.sidePanel{display:grid;gap:12px}
+.noteBox{background:#fff;border:3px solid #184d9c;border-radius:22px;padding:13px;box-shadow:0 8px 0 rgba(24,77,156,.09)}
+.noteBox h3{margin:0 0 8px;color:#184d9c;font-size:20px}
+.logList{min-height:90px;display:grid;gap:8px}
+.logItem{background:#fff7df;border:2px dashed #d99b00;border-radius:14px;padding:8px;font-weight:1000}
+.logItem b{color:#d82769}
+.status{min-height:34px;text-align:center;font-weight:1000;font-size:clamp(17px,2.3vw,24px);margin-top:10px}
+.good{color:var(--green)}.bad{color:var(--red)}
+.answerBox{margin-top:14px;background:#fff;border:3px solid #184d9c;border-radius:22px;padding:14px}
+.fracAns{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap}
+.fracAns input{width:86px}
+.slash{font-size:35px;font-weight:1000;color:#184d9c}
+.simplifyBox{display:none;margin-top:12px;padding:12px;border:3px dashed #e94e5f;border-radius:18px;background:#fff8fb}
+.simplifyBox.active{display:block}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.52);display:none;align-items:center;justify-content:center;z-index:20;padding:18px}
+.overlay.active{display:flex}
+.pop{width:min(560px,92vw);background:#fff;border:5px solid #184d9c;border-radius:30px;padding:24px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.28);animation:pop .22s ease both}
+.pop .emo{font-size:64px}.pop h2{font-size:36px;margin:8px 0;color:#184d9c}.pop p{margin:6px 0}
+@keyframes pop{from{transform:scale(.75);opacity:0}to{transform:scale(1);opacity:1}}
+.summaryGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:16px 0}
+.sumCard{background:#fff;border:3px solid #184d9c;border-radius:18px;padding:14px;text-align:center;font-weight:1000}
+.sumCard b{display:block;font-size:34px;color:#d82769}
+table{width:100%;border-collapse:collapse;background:#fff;border:3px solid #184d9c;border-radius:16px;overflow:hidden}
+th,td{border-bottom:2px solid #b9defe;padding:10px;text-align:center;font-weight:900;vertical-align:top}
+th{background:#dff1ff;color:#184d9c}
+.detail{font-size:13px;line-height:1.45;color:#4c5870}
+.printOnly{display:none}
+@media(max-width:860px){
+  .topbar{grid-template-columns:1fr 1fr}.topbar .pill:first-child{grid-column:1/-1}
+  .gameGrid{grid-template-columns:1fr}
+  .sidePanel{grid-template-columns:1fr}
+  button{width:100%}.factorBtn{width:auto}
+  .surgeryPanel{overflow-x:auto;overflow-y:visible;padding-left:10px;padding-right:10px;padding-bottom:34px}
+  .fracLine{gap:12px;align-items:flex-start;justify-content:flex-start;overflow:visible;padding:8px 0 26px}
+  .fraction{min-width:72px;gap:44px;overflow:visible}
+  .numNode{overflow:visible;min-width:56px;min-height:52px;font-size:34px;padding:3px 7px}
+  .newTrail{
+    left:50%;top:calc(100% + 6px);transform:translateX(-50%);flex-direction:row;align-items:center;gap:5px;
+    white-space:nowrap;background:rgba(255,253,244,.94);border-radius:14px;padding:2px 4px;box-shadow:0 4px 12px rgba(24,59,115,.10)
+  }
+  .smallNode{min-width:33px;height:30px;font-size:18px;border-radius:10px}
+  .smallInput{position:static;width:38px;height:31px;font-size:18px;padding:2px;margin-left:2px;flex:0 0 auto}
+  .bar{margin-top:6px;margin-bottom:6px}
+  .times{align-self:center;padding-top:38px;font-size:32px}
+}
+@media(max-width:430px){
+  .fracLine{gap:10px}
+  .fraction{min-width:64px;gap:48px}
+  .numNode{min-width:50px;min-height:48px;font-size:30px}
+  .smallNode{min-width:30px;height:28px;font-size:16px}
+  .smallInput{width:35px;height:29px;font-size:16px}
+}
+@media print{
+  body{background:#fff}.header,.topbar,.row button,.answerBox,.factorPad,.sidePanel,.surgeryPanel,.questionBox,.decor{display:none!important}
+  .screen{display:none}.screen.active{display:block}.card{border:0;box-shadow:none;background:#fff;padding:0}
+  .printOnly{display:block}
+  table{font-size:12px} th,td{padding:6px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="logo">Kru Pai Classroom ✦ Fraction Surgery Set 3</div>
+    <div class="badge">คูณเศษส่วน 3 จำนวน ✂️</div>
+  </div>
+
+  <section id="startScreen" class="screen active">
+    <div class="card">
+      <div class="decor d1">✂️</div><div class="decor d2">🧮</div><div class="decor d3">⭐</div>
+      <h1>Fraction Surgery<br>Set 3</h1>
+      <p>คูณเศษส่วน 3 จำนวนแบบ “สมุดทดมีชีวิต” เลือกเลขบน 1 ตัวกับเลขล่าง 1 ตัวจากเศษส่วนใดก็ได้ ตัดทอนเอง เติมเลขที่เหลือเอง และจัดแถวใหม่จากเลขล่าสุดได้เมื่อเริ่มรก</p>
+      <div class="rules">
+        <div class="rule">1️⃣ กดเลขบนกับเลขล่าง 2 ตัวที่ต้องการตัดทอน</div>
+        <div class="rule">2️⃣ กดแม่เลขด้านล่าง เช่น 2, 3, 5</div>
+        <div class="rule">3️⃣ เติมเลขใหม่ในช่องเล็กเอง แล้วกดตรวจการตัดทอน</div>
+        <div class="rule">4️⃣ เลขเล็กที่เหลือสามารถกดตัดต่อได้</div>
+        <div class="rule">5️⃣ ถ้าโจทย์เริ่มรก กด “จัดแถวใหม่จากเลขล่าสุด”</div>
+        <div class="rule">6️⃣ หน้าสรุปดูโจทย์ คำตอบ และกดพิมพ์/บันทึก PDF ได้</div>
+      </div>
+      <div class="row">
+        <input id="playerName" placeholder="พิมพ์ชื่อผู้เล่น...">
+        <button class="btnBlue" onclick="startGame()">เริ่มภารกิจ ✂️</button>
+        <button class="btnGray" onclick="goFull()">เต็มจอ 📺</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="gameScreen" class="screen">
+    <div class="card">
+      <div class="decor d1">✂️</div>
+      <div class="topbar">
+        <div class="pill">ผู้เล่น: <span id="nameShow">-</span></div>
+        <div class="pill">ข้อ <span id="qNo">1</span>/10</div>
+        <div class="pill">ถูก <span id="scoreShow">0</span></div>
+        <div class="pill">สถานะ: <span id="modeShow">ตัดทอน</span></div>
+      </div>
+      <div class="gameGrid">
+        <main>
+          <div id="questionBox" class="questionBox"></div>
+          <div class="surgeryPanel">
+            <div id="fracLine" class="fracLine"></div>
+            <div class="factorPad">
+              <button class="factorBtn" onclick="chooseFactor(1)">1</button>
+              <button class="factorBtn" onclick="chooseFactor(2)">2</button>
+              <button class="factorBtn" onclick="chooseFactor(3)">3</button>
+              <button class="factorBtn" onclick="chooseFactor(4)">4</button>
+              <button class="factorBtn" onclick="chooseFactor(5)">5</button>
+              <button class="factorBtn" onclick="chooseFactor(6)">6</button>
+              <button class="factorBtn" onclick="chooseFactor(7)">7</button>
+              <button class="factorBtn" onclick="chooseFactor(8)">8</button>
+              <button class="factorBtn" onclick="chooseFactor(9)">9</button>
+            </div>
+            <div class="row" style="margin-top:12px">
+              <button class="btnGreen" onclick="checkCut()">ตรวจการตัดทอน ✅</button>
+              <button class="btnPink" onclick="clearSelection()">ยกเลิกเลือกเลข</button>
+              <button class="btnBlue" onclick="compactCurrent()">จัดแถวใหม่จากเลขล่าสุด</button>
+              <button class="btnGray" onclick="skipCut()">พอใจแล้ว ไปตอบ</button>
+            </div>
+            <div id="status" class="status"></div>
+          </div>
+
+          <div class="answerBox">
+            <div style="text-align:center;font-weight:1000;font-size:22px;color:#184d9c;margin-bottom:8px">คำตอบผลคูณ</div>
+            <div class="fracAns">
+              <input id="ansN" inputmode="numeric" placeholder="เศษ">
+              <span class="slash">/</span>
+              <input id="ansD" inputmode="numeric" placeholder="ส่วน">
+              <button class="btnGreen" onclick="checkAnswer()">ตรวจคำตอบ 🎯</button>
+            </div>
+            <div id="simplifyBox" class="simplifyBox">
+              <div style="font-weight:1000;text-align:center;color:#d82769;margin-bottom:8px">ถูกแล้ว แต่ยังทำเป็นอย่างต่ำได้อีก ลองตอบอย่างต่ำจ้า 🌟</div>
+              <div class="fracAns">
+                <input id="simpN" inputmode="numeric" placeholder="เศษอย่างต่ำ">
+                <span class="slash">/</span>
+                <input id="simpD" inputmode="numeric" placeholder="ส่วนอย่างต่ำ">
+                <button class="btnPink" onclick="checkSimplify()">ตรวจอย่างต่ำ ✨</button>
+              </div>
+            </div>
+          </div>
+        </main>
+
+        <aside class="sidePanel">
+          <div class="noteBox">
+            <h3>✂️ ลำดับแม่ที่เลือก</h3>
+            <div id="factorLog" class="logList"><div class="detail">ยังไม่ได้เลือกแม่เลข</div></div>
+          </div>
+          <div class="noteBox">
+            <h3>📌 ทริค</h3>
+            <div class="detail">
+              กดเลขบน 1 ตัวกับเลขล่าง 1 ตัวจากเศษส่วนใดก็ได้ ถ้าเริ่มรกให้กด “จัดแถวใหม่จากเลขล่าสุด” ระบบจะย้ายเลขที่เหลือไปขึ้นบรรทัดใหม่ให้โล่งขึ้น
+            </div>
+          </div>
+          <div class="noteBox">
+            <h3>🧾 ประวัติข้อนี้</h3>
+            <div id="cutHistory" class="logList"><div class="detail">ยังไม่มีประวัติการตัดทอน</div></div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section id="summaryScreen" class="screen">
+    <div class="card">
+      <h1>สรุปผล Fraction Surgery Set 3 🏆</h1>
+      <div class="summaryGrid">
+        <div class="sumCard">ผู้เล่น <b id="sumName">-</b></div>
+        <div class="sumCard">คะแนน <b id="sumScore">0/10</b></div>
+        <div class="sumCard">Perfect <b id="sumPerfect">0</b></div>
+      </div>
+      <table>
+        <thead><tr><th>ข้อ</th><th>โจทย์</th><th>คำตอบอย่างต่ำ</th><th>คำตอบที่ส่ง</th><th>ผล</th><th>ลำดับการตัดทอน</th></tr></thead>
+        <tbody id="resultRows"></tbody>
+      </table>
+      <div class="row" style="margin-top:16px">
+        <button class="btnBlue" onclick="window.print()">พิมพ์ / บันทึกเป็น PDF 📄</button>
+        <button class="btnGray" onclick="restart()">กลับหน้าแรก 🔁</button>
+      </div>
+      <p class="printOnly">รายงานนี้สร้างจาก Fraction Surgery Set 3 - Kru Pai Classroom</p>
+    </div>
+  </section>
+</div>
+
+<div id="overlay" class="overlay">
+  <div class="pop">
+    <div id="popEmo" class="emo">🌟</div>
+    <h2 id="popTitle">Perfect!</h2>
+    <p id="popText"></p>
+    <button class="btnBlue" onclick="closePop()">ตกลง</button>
+  </div>
+</div>
+
+<script>
+const questions=[
+  {a:2,b:9,c:3,d:10,e:5,f:8},
+  {a:4,b:15,c:9,d:14,e:7,f:12},
+  {a:5,b:18,c:6,d:25,e:10,f:21},
+  {a:8,b:27,c:9,d:20,e:5,f:16},
+  {a:12,b:35,c:14,d:18,e:15,f:28},
+  {a:16,b:45,c:9,d:32,e:25,f:18},
+  {a:21,b:40,c:10,d:63,e:8,f:15},
+  {a:18,b:49,c:14,d:45,e:25,f:12},
+  {a:22,b:27,c:9,d:55,e:15,f:26},
+  {a:24,b:35,c:14,d:45,e:15,f:32}
+];
+
+let state={
+  player:"", qIndex:0, score:0, perfect:0, results:[],
+  nodes:[], selected:[], pendingFactor:null, logs:[], cutHistory:[],
+  answered:false, lastSubmitted:""
+};
+function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){let t=b;b=a%b;a=t}return a||1}
+function simplify(n,d){let g=gcd(n,d);return [n/g,d/g]}
+function showScreen(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));document.getElementById(id).classList.add("active")}
+function beep(type="ok"){
+  try{
+    const ctx=new (window.AudioContext||window.webkitAudioContext)();
+    const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);
+    o.frequency.value=type==="bad"?180: type==="perfect"?880:560;
+    g.gain.value=.08;
+    o.frequency.exponentialRampToValueAtTime(type==="bad"?80: type==="perfect"?1300:880,ctx.currentTime+.18);
+    g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.26);o.start();o.stop(ctx.currentTime+.27);
+  }catch(e){}
+}
+function nodeId(){return "n"+Math.random().toString(36).slice(2,9)}
+function makeNode(value, pos, parent=null){
+  return {id:nodeId(), value, pos, parent, cancelled:false, pending:false, pendingFactor:null, inputValue:""};
+}
+function currentQuestion(){return questions[state.qIndex]}
+function startGame(){
+  state.player=document.getElementById("playerName").value.trim()||"นักคณิตตัวน้อย";
+  state.qIndex=0; state.score=0; state.perfect=0; state.results=[];
+  showScreen("gameScreen"); loadQuestion();
+}
+function loadQuestion(){
+  const q=currentQuestion();
+  state.selected=[]; state.pendingFactor=null; state.logs=[]; state.cutHistory=[]; state.answered=false; state.lastSubmitted="";
+  state.nodes=[
+    makeNode(q.a,"n1"), makeNode(q.b,"d1"),
+    makeNode(q.c,"n2"), makeNode(q.d,"d2"),
+    makeNode(q.e,"n3"), makeNode(q.f,"d3")
+  ];
+  document.getElementById("qNo").textContent=state.qIndex+1;
+  document.getElementById("scoreShow").textContent=state.score;
+  document.getElementById("nameShow").textContent=state.player;
+  document.getElementById("modeShow").textContent="ตัดทอน";
+  document.getElementById("ansN").value=""; document.getElementById("ansD").value="";
+  document.getElementById("simpN").value=""; document.getElementById("simpD").value="";
+  document.getElementById("simplifyBox").classList.remove("active");
+  document.getElementById("questionBox").innerHTML=`ข้อ ${state.qIndex+1}: คูณเศษส่วน 3 จำนวน <b>${q.a}/${q.b} × ${q.c}/${q.d} × ${q.e}/${q.f}</b><br><span style="font-size:.82em;color:#d82769">เลือกตัดทอนข้ามเลขบนกับเลขล่างตัวไหนก็ได้ แล้วตอบผลคูณเป็นเศษส่วน</span>`;
+  setStatus("เลือกตัวเลข 2 ตัวที่ต้องการตัดทอน แล้วเลือกแม่เลขด้านล่าง", "");
+  renderAll();
+}
+function activeNodeFor(id){
+  return state.nodes.find(n=>n.id===id && !n.cancelled && !n.pending);
+}
+function getVisibleChain(root){
+  const arr=[]; let cur=root;
+  while(cur){
+    arr.push(cur);
+    const child=state.nodes.find(n=>n.parent===cur.id);
+    cur=child||null;
+  }
+  return arr;
+}
+function leafForPos(pos){
+  const roots=state.nodes.filter(n=>n.pos===pos && n.parent===null);
+  let cur=roots[0];
+  while(true){
+    const child=state.nodes.find(n=>n.parent===cur.id);
+    if(!child) return cur;
+    cur=child;
+  }
+}
+function renderNodeChain(root){
+  const chain=getVisibleChain(root);
+  const rootNode=chain[0];
+  let html=`<div class="numNode ${rootNode.cancelled?'cancelled':''} ${state.selected.includes(rootNode.id)?'selected':''}" onclick="selectNode('${rootNode.id}')">${rootNode.value}`;
+  html += `<div class="newTrail">`;
+  for(let i=1;i<chain.length;i++){
+    const n=chain[i];
+    html += `<div class="smallNode ${n.cancelled?'cancelled':''} ${state.selected.includes(n.id)?'selected':''}" onclick="event.stopPropagation();selectNode('${n.id}')">${n.value}</div>`;
+  }
+  const leaf=chain[chain.length-1];
+  if(leaf.pending){
+    html += `<input class="smallInput" id="input_${leaf.id}" inputmode="numeric" value="${leaf.inputValue||''}" oninput="saveInput('${leaf.id}',this.value)" onclick="event.stopPropagation()" placeholder="?">`;
+  }
+  html += `</div></div>`;
+  return html;
+}
+function renderFraction(nPos,dPos){
+  const nRoot=state.nodes.find(n=>n.pos===nPos && n.parent===null);
+  const dRoot=state.nodes.find(n=>n.pos===dPos && n.parent===null);
+  return `<div class="fraction">${renderNodeChain(nRoot)}<div class="bar"></div>${renderNodeChain(dRoot)}</div>`;
+}
+function renderAll(){
+  document.getElementById("fracLine").innerHTML=`${renderFraction("n1","d1")}<div class="times">×</div>${renderFraction("n2","d2")}<div class="times">×</div>${renderFraction("n3","d3")}`;
+  renderLogs();
+}
+function renderLogs(){
+  document.getElementById("factorLog").innerHTML= state.logs.length ? state.logs.map((x,i)=>`<div class="logItem">${i+1}. เลือกแม่ <b>${x.factor}</b></div>`).join("") : `<div class="detail">ยังไม่ได้เลือกแม่เลข</div>`;
+  document.getElementById("cutHistory").innerHTML= state.cutHistory.length ? state.cutHistory.map((x,i)=>`<div class="logItem">${i+1}. ${x}</div>`).join("") : `<div class="detail">ยังไม่มีประวัติการตัดทอน</div>`;
+}
+function selectNode(id){
+  const n=activeNodeFor(id);
+  if(!n){return}
+  if(state.selected.includes(id)){
+    state.selected=state.selected.filter(x=>x!==id);
+  }else{
+    if(state.selected.length>=2) state.selected.shift();
+    state.selected.push(id);
+  }
+  renderAll();
+}
+function chooseFactor(f){
+  if(state.selected.length!==2){setStatus("เลือกเลข 2 ตัวก่อน แล้วค่อยเลือกแม่เลขนะจ๊ะ","bad"); beep("bad"); return}
+  const a=activeNodeFor(state.selected[0]), b=activeNodeFor(state.selected[1]);
+  if(!a||!b){setStatus("เลขที่เลือกไม่พร้อมตัดทอน ลองเลือกใหม่จ้า","bad"); beep("bad"); return}
+  if(f===1){setStatus("แม่ 1 ไม่ช่วยตัดทอน ลองเลือกแม่อื่นนะจ๊ะ","bad"); beep("bad"); return}
+  if(a.value%f!==0 || b.value%f!==0){
+    setStatus(`ตัดด้วยแม่ ${f} ไม่ได้ เพราะ ${a.value} หรือ ${b.value} หารไม่ลงตัว`, "bad"); beep("bad"); return;
+  }
+  const numerator = a.pos[0]==="n" || b.pos[0]==="n";
+  const denominator = a.pos[0]==="d" || b.pos[0]==="d";
+  if(!(numerator && denominator)){
+    setStatus("ควรเลือกเลขบน 1 ตัว และเลขล่าง 1 ตัวเพื่อตัดทอนข้ามกัน", "bad"); beep("bad"); return;
+  }
+  state.pendingFactor=f;
+  state.logs.push({factor:f});
+  a.pending=true; b.pending=true; a.pendingFactor=f; b.pendingFactor=f; a.inputValue=""; b.inputValue="";
+  setStatus(`ลำดับที่ ${state.logs.length} เลือกตัดทอนด้วยแม่ ${f} เติมเลขใหม่ในช่องเล็กได้เลย`, "good");
+  beep("ok"); renderAll();
+}
+function saveInput(id,val){
+  const n=state.nodes.find(x=>x.id===id);
+  if(n) n.inputValue=val.replace(/[^0-9]/g,"");
+}
+function checkCut(){
+  const pending=state.nodes.filter(n=>n.pending);
+  if(pending.length!==2){setStatus("ยังไม่มีคู่ที่รอตรวจ เลือกเลขและแม่ก่อนจ้า","bad"); beep("bad"); return}
+  const f=pending[0].pendingFactor;
+  let ok=true;
+  pending.forEach(n=>{
+    const input=document.getElementById("input_"+n.id);
+    if(input) n.inputValue=input.value.replace(/[^0-9]/g,"");
+    const expected=n.value/f;
+    if(parseInt(n.inputValue,10)!==expected) ok=false;
+  });
+  if(!ok){
+    setStatus(`ลองคิดใหม่จ้า เลขใหม่ต้องมาจากการหารด้วยแม่ ${f}`, "bad"); beep("bad"); return;
+  }
+  const desc=pending.map(n=>`${n.value}→${n.inputValue}`).join(" , ") + `  (÷${f})`;
+  pending.forEach(n=>{
+    n.cancelled=true; n.pending=false;
+    const child=makeNode(parseInt(n.inputValue,10), n.pos, n.id);
+    state.nodes.push(child);
+  });
+  state.cutHistory.push(desc);
+  state.selected=[]; state.pendingFactor=null;
+  setStatus("ตัดทอนถูกต้อง! จะตัดต่อหรือจัดแถวใหม่ก็ได้จ้า ✅", "good"); beep("perfect"); renderAll();
+}
+function compactCurrent(){
+  const vals = ["n1","d1","n2","d2","n3","d3"].map(pos=>leafForPos(pos).value);
+  state.nodes=[
+    makeNode(vals[0],"n1"), makeNode(vals[1],"d1"),
+    makeNode(vals[2],"n2"), makeNode(vals[3],"d2"),
+    makeNode(vals[4],"n3"), makeNode(vals[5],"d3")
+  ];
+  state.selected=[];
+  state.pendingFactor=null;
+  state.cutHistory.push(`จัดแถวใหม่: ${vals[0]}/${vals[1]} × ${vals[2]}/${vals[3]} × ${vals[4]}/${vals[5]}`);
+  setStatus("จัดแถวใหม่จากเลขล่าสุดแล้ว ตัดต่อได้โล่งขึ้นจ้า ✨", "good");
+  beep("ok");
+  renderAll();
+}
+function clearSelection(){
+  state.selected=[];
+  setStatus("ยกเลิกการเลือกเลขแล้ว", "");
+  renderAll();
+}
+function skipCut(){
+  document.getElementById("modeShow").textContent="ตอบคำตอบ";
+  setStatus("เติมคำตอบผลคูณได้เลย ถ้ายังไม่ต่ำสุดระบบจะเตือน", "good");
+}
+function currentProduct(){
+  const n1=leafForPos("n1").value, d1=leafForPos("d1").value;
+  const n2=leafForPos("n2").value, d2=leafForPos("d2").value;
+  const n3=leafForPos("n3").value, d3=leafForPos("d3").value;
+  return [n1*n2*n3, d1*d2*d3];
+}
+function originalProduct(){
+  const q=currentQuestion();
+  return [q.a*q.c*q.e, q.b*q.d*q.f];
+}
+function checkAnswer(){
+  if(state.answered){return}
+  const n=parseInt(document.getElementById("ansN").value,10), d=parseInt(document.getElementById("ansD").value,10);
+  if(!n || !d){setStatus("เติมเศษและส่วนให้ครบก่อนนะจ๊ะ","bad"); beep("bad"); return}
+  const [origN,origD]=originalProduct();
+  if(n*origD !== d*origN){setStatus("คำตอบยังไม่เท่ากับผลคูณ ลองดูตัวเลขที่เหลืออีกครั้งจ้า","bad"); beep("bad"); return}
+  state.lastSubmitted=`${n}/${d}`;
+  const [sn,sd]=simplify(origN,origD);
+  if(n===sn && d===sd){
+    finishQuestion(`Perfect Answer!!! เศษส่วนอย่างต่ำแล้วจ้า 🌟`, `${n}/${d}`);
+  }else{
+    document.getElementById("simplifyBox").classList.add("active");
+    setStatus("คำตอบถูกแล้ว แต่ยังทำเป็นอย่างต่ำได้อีกนะจ๊ะ", "good"); beep("ok");
+  }
+}
+function checkSimplify(){
+  if(state.answered){return}
+  const n=parseInt(document.getElementById("simpN").value,10), d=parseInt(document.getElementById("simpD").value,10);
+  const [sn,sd]=simplify(...originalProduct());
+  if(n===sn && d===sd){
+    finishQuestion("Perfect Answer!!! ตอบอย่างต่ำถูกต้อง 🎉", `${n}/${d}`);
+  }else{
+    setStatus("ยังไม่ใช่เศษส่วนอย่างต่ำ ลองหารตัวร่วมอีกครั้งจ้า", "bad"); beep("bad");
+  }
+}
+function finishQuestion(msg,submitted){
+  state.answered=true; state.score++; state.perfect++;
+  const q=currentQuestion(); const [sn,sd]=simplify(...originalProduct());
+  state.results.push({
+    no:state.qIndex+1,
+    q:`${q.a}/${q.b} × ${q.c}/${q.d} × ${q.e}/${q.f}`,
+    answer:`${sn}/${sd}`,
+    submitted: submitted || state.lastSubmitted,
+    status:"✅ Perfect",
+    logs: state.logs.map((x,i)=>`${i+1}. แม่ ${x.factor}`).join("<br>") || "-",
+    cuts: state.cutHistory.join("<br>") || "-"
+  });
+  showPop("🌟","Perfect Answer!!!",msg);
+  beep("perfect");
+}
+function nextQuestion(){
+  state.qIndex++;
+  if(state.qIndex>=questions.length){showSummary();return}
+  loadQuestion();
+}
+function showSummary(){
+  showScreen("summaryScreen");
+  document.getElementById("sumName").textContent=state.player;
+  document.getElementById("sumScore").textContent=`${state.score}/10`;
+  document.getElementById("sumPerfect").textContent=state.perfect;
+  document.getElementById("resultRows").innerHTML=state.results.map(r=>`
+    <tr>
+      <td>${r.no}</td><td>${r.q}</td><td>${r.answer}</td><td>${r.submitted}</td><td>${r.status}</td>
+      <td><div class="detail">${r.logs}<hr>${r.cuts}</div></td>
+    </tr>`).join("");
+}
+function showPop(emo,title,text){
+  document.getElementById("popEmo").textContent=emo;
+  document.getElementById("popTitle").textContent=title;
+  document.getElementById("popText").innerHTML=text + `<br><br><button class="btnGreen" onclick="closePop();nextQuestion()">ไปข้อถัดไป ➜</button>`;
+  document.getElementById("overlay").classList.add("active");
+}
+function closePop(){document.getElementById("overlay").classList.remove("active")}
+function setStatus(t,cls){const s=document.getElementById("status");s.textContent=t;s.className="status "+(cls||"")}
+function restart(){showScreen("startScreen")}
+function goFull(){const el=document.documentElement;if(el.requestFullscreen)el.requestFullscreen()}
+</script>
+</body>
+</html>
